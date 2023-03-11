@@ -127,12 +127,22 @@ JsonValue JsonParser::parse_array() {
     assert(m_content[m_index] == '[');
     ++m_index;
     std::vector<JsonValue> values;
+    int n = m_content.length();
     while (true) {
-        skipWhiteSpaces();
+        if (m_index >= n) {
+            throw std::logic_error("parse array error");
+        }
         values.push_back(std::move(parse()));
         skipWhiteSpaces();
+        if (m_index >= n) {
+            throw std::logic_error("parse array error");
+        }
+        if (m_content[m_index] == ']') {
+            ++m_index;
+            break;
+        }
         if (m_content[m_index] != ',') {
-            throw std::logic_error("parse string error");
+            throw std::logic_error("parse array error");
         }
         ++m_index;
     }

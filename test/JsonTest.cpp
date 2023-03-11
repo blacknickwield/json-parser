@@ -34,13 +34,28 @@ TEST(JsonParserTest, StringTest) {
     EXPECT_EQ(value_hello.m_value.m_string.length, 5);
 }
 
-// TEST(JsonParserTest, NumberTest) {
+TEST(JsonParserTest, NumberTest) {
+    JsonParser parser;
+    auto value_zero = parser.parse("0");
+    EXPECT_EQ(value_zero.m_type, JsonValue::NUMBER);
+    EXPECT_EQ(value_zero.m_value.m_number, 0);
+    
+    auto value_nzero = parser.parse("-0");
+    EXPECT_EQ(value_nzero.m_type, JsonValue::NUMBER);
+    EXPECT_EQ(value_zero.m_value.m_number, 0);
+}
 
-// }
 
-// TEST(JsonParserTest, ArrayTest) {
-
-// }
+TEST(JsonParserTest, ArrayTest) {
+    JsonParser parser;
+    auto value = parser.parse("[null, \"Hello\", true]");
+    EXPECT_EQ(value.m_type, JsonValue::ARRAY);
+    EXPECT_EQ(value.m_value.m_array.size, 3);
+    EXPECT_EQ(value.m_value.m_array.values[0].m_type, JsonValue::NULL_VALUE);
+    EXPECT_EQ(value.m_value.m_array.values[1].m_type, JsonValue::STRING);
+    EXPECT_EQ(value.m_value.m_array.values[2].m_type, JsonValue::BOOL);
+    EXPECT_EQ(value.m_value.m_array.values[2].m_value.m_bool, true);
+}
 
 
 }
