@@ -151,45 +151,51 @@ JsonValue JsonParser::parse_array() {
 }
 
 JsonValue JsonParser::parse_object() {
-    // TODO
     assert(m_content[m_index] == '{');
     ++m_index;
     int n = m_content.length();
     std::vector<std::pair<std::string, JsonValue>> objects;
     while (true) {
+        // parse key
         skipWhiteSpaces();
         if (m_index >= n) {
             throw std::logic_error("parse object error");
         }
-        if (m_content[m_index] == '}') break;
+        if (m_content[m_index] == '}') {
+            break;
+        }
 
         if (m_content[m_index] != '"') {
             throw std::logic_error("parse object error");
         }
 
         auto &&key = parse_string();
+
+        // seperator check
         skipWhiteSpaces();
         if (m_index >= n) {
             throw std::logic_error("parse object error");
         }
-        if (m_content[m_index] == ':') {
+        if (m_content[m_index] != ':') {
             throw std::logic_error("parse object error");
         }
-        skipWhiteSpaces();
-        if (m_content[m_index] >= n) {
-            throw std::logic_error("parse object error");
-        }
+        ++m_index;
+
+        // parse value
         auto &&value = parse();
+        objects.push_back({std::string(key.m_value.m_string.s), value});
         skipWhiteSpaces();
         if (m_index >= n) {
             throw std::logic_error("parse object error");
+        }
+        if (m_content[m_index] == '}') {
+            break;
         }
         if (m_content[m_index] != ',') {
             throw std::logic_error("parse object error");
         }
-        objects.push_back({std::string(key.m_value.m_string.s), value});
     }
-    return JsonValue();
+    return JsonValue(objects);
 }
 
 } // namespace json

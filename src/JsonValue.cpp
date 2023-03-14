@@ -31,6 +31,17 @@ JsonValue::JsonValue(std::vector<JsonValue> &value) : m_type(JsonType::ARRAY) {
         *(p++) = e;
     }
 }
+
+JsonValue::JsonValue(std::vector<std::pair<std::string, JsonValue>> &value) : m_type(JsonType::OBJECT) {
+    m_value.m_object.size = value.size();
+    m_value.m_object.objects = (JsonObject*)malloc(sizeof(JsonObject) * m_value.m_object.size);
+    auto *p = m_value.m_object.objects;
+    for (const auto &[k, v] : value) {
+        p->key = k;
+        p->value = v;
+        p++;
+    }
+}
 // JsonValue::JsonValue(const char *value) : m_type(JsonType::STRING)
 // {
 //   m_value.m_string = std::make_shared<std::string>(value);
@@ -43,6 +54,8 @@ JsonValue::JsonValue(std::vector<JsonValue> &value) : m_type(JsonType::ARRAY) {
 
 JsonValue::JsonValue(JsonType type) : m_type(type) {
     switch (type) {
+    case JsonType::NULL_VALUE:
+        break;
     case JsonType::BOOL:
       /* code */
         m_value.m_bool = false;
@@ -58,11 +71,13 @@ JsonValue::JsonValue(JsonType type) : m_type(type) {
         m_value.m_array.size = -1;
         m_value.m_array.values = nullptr;
         break;
+    case JsonType::OBJECT:
+        // TODO
+        break;
     default:
-      break;
+        break;
   }
 }
-
 
 JsonValue& JsonValue::operator = (bool value) {
     m_type = JsonType::BOOL;
@@ -101,4 +116,32 @@ JsonValue& JsonValue::operator = (const JsonValue &value) {
     return *this;
 }
 
+
+
+JsonValue& JsonValue::operator = (const std::vector<JsonValue> &value) {
+    m_type = JsonType::ARRAY;
+    size_t len = value.size();
+    m_value.m_array.size = len;
+    m_value.m_array.values = (JsonValue*)malloc(sizeof(JsonValue) * len);
+    auto *p = m_value.m_array.values;
+    for (const auto &e : value) {
+        *(p++) = e;
+    }
+    return *this;
+}
+
+JsonValue& JsonValue::operator = (const std::vector<std::pair<std::string, JsonValue>> &value) {
+    m_type = JsonType::OBJECT;
+    size_t len = value.size();
+    m_value.m_object.size = len;
+    m_value.m_object.objects = (JsonObject*)malloc(sizeof(JsonObject) * len);
+    auto *p = m_value.m_object.objects;
+    for (const auto &[k, v] : value) {
+        p->key = k;
+        p->value = v;
+        p++;
+    }
+
+    return *this;
+}
 }  // namespace json

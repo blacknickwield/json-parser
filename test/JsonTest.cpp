@@ -57,5 +57,13 @@ TEST(JsonParserTest, ArrayTest) {
     EXPECT_EQ(value.m_value.m_array.values[2].m_value.m_bool, true);
 }
 
+TEST(JsonParserTest, ObjectTest) {
+    JsonParser parser;
+    auto value = parser.parse("{\"a\":1}");
+    EXPECT_EQ(value.m_type, JsonValue::OBJECT);
+    EXPECT_EQ(value.m_value.m_object.size, 1);
+    // EXPECT_EQ();
+
+}
 
 }

@@ -24,12 +24,16 @@ public:
   // explicit JsonValue(const std::string &value);
   explicit JsonValue(std::string &&value);
   explicit JsonValue(std::vector<JsonValue> &value);
+  explicit JsonValue(std::vector<std::pair<std::string, JsonValue>> &value);
 
-  JsonValue &operator =(bool value);
-  JsonValue &operator =(double value);
-  JsonValue &operator =(const char *value);
-  JsonValue &operator =(std::string &&value);
-  JsonValue &operator =(const JsonValue &value);
+  JsonValue &operator = (bool value);
+  JsonValue &operator = (double value);
+  JsonValue &operator = (const char *value);
+  JsonValue &operator = (std::string &&value);
+  JsonValue &operator = (const JsonValue &value);
+  JsonValue &operator = (const std::vector<JsonValue> &value);
+  JsonValue &operator = (const std::vector<std::pair<std::string, JsonValue>> &value);
+
 
   JsonType m_type;
   
